@@ -23,7 +23,7 @@ public class PostMapper {
 
     // map Postdto to Post entity
 
-    public Post mapToPost(PostDto postDto) {
+    public static Post mapToPost(PostDto postDto) {
         return Post.builder()
                 .id(postDto.getId())
                 .title(postDto.getTitle())
