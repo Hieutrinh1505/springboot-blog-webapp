@@ -1,8 +1,11 @@
 package net.javaguide.springboot.controller;
 
 import jakarta.validation.Valid;
+import net.javaguide.springboot.dto.CommentDto;
 import net.javaguide.springboot.dto.PostDto;
+import net.javaguide.springboot.entity.Comment;
 import net.javaguide.springboot.entity.Post;
+import net.javaguide.springboot.service.CommentService;
 import net.javaguide.springboot.service.PostService;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
@@ -20,9 +23,11 @@ import java.util.List;
 public class PostController {
 
     private PostService postService;
+    private CommentService commentService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService,CommentService commentService) {
         this.postService = postService;
+        this.commentService = commentService;
     }
 
     // create handler method, GET request and return model and view
@@ -103,5 +108,26 @@ public class PostController {
         PostDto postDto = postService.findPostByUrl(postUrl);
         model.addAttribute("post",postDto);
         return "admin/view_post";
+    }
+
+    //handler method to list comments request
+    @GetMapping("/admin/posts/comments")
+    public String postComments(Model model)
+    {
+        List<CommentDto> comments = commentService.findAllComments();
+        model.addAttribute("comments",comments);
+        return "admin/comments";
+    }
+
+    //handler method to delete comment
+    @GetMapping("admin/posts/comments/{commentId}/delete")
+    public  String deleteComment(@PathVariable("commentId") Long commentId,Model model)
+    {
+        commentService.deleteComment(commentId);
+
+        List<CommentDto> comments = commentService.findAllComments();
+
+        model.addAttribute("comments",comments);
+        return "redirect:/admin/posts/comments";
     }
 }
